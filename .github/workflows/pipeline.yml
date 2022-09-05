@@ -20,7 +20,7 @@ jobs:
           node-version: '16'
       - name: array
         env:
-          ARRAY: ${{ join(github.event.commits.*.url, '') }}
+          ARRAY: ${{ join(github.event.commits.*.url, ' ') }}
         run: echo "$ARRAY"
       - name: npm install
         run: npm install
