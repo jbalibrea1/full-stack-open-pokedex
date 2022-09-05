@@ -64,7 +64,7 @@ jobs:
           avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
           text: Build failed
           description: commit
-          details: ${{ join(github.event.commits.*.url) }} by ${{ join(github.event.commits.*.committer.username)} broke the build :(
+          details: ${{ join(github.event.commits.*.url) }} by ${{ join(github.event.commits.*.committer.username)}} broke the build :(
           footer: 'Severity: Error'
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
