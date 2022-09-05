@@ -22,10 +22,14 @@ jobs:
         env:
           COMMITS: ${{ toJson(github.event.commits) }}
         run: echo "$COMMITS"
-      - name: commit messages
+      - name: commit URL
         env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.url) }}
-        run: echo "$COMMIT_MESSAGES"
+          COMMIT_URL: ${{ join(github.event.commits.*.url) }}
+        run: echo "$COMMIT_URL"
+      - name: commit URLv2
+        env:
+          COMMIT_URL2: ${{ join(github.event.commits.url) }}
+        run: echo "$COMMIT_URL2"
       - name: npm install
         run: npm install
       - name: lint
