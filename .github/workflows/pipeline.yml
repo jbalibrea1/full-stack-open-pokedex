@@ -19,17 +19,17 @@ jobs:
         with:
           node-version: '16'
       - name: ALL
-        run: echo ${{  toJson(github.event.commits) }}
+        run: echo "${{  toJson(github.event.commits) }}"
       - name: HEAD
-        run: echo ${{  github.event.head_commit.message }}
+        run: echo "${{  github.event.head_commit.message }}"
       - name: ONE
-        run: echo ${{ join(github.event.commits.*.url, ' ') }}
+        run: echo "${{ join(github.event.commits.*.url, ' ') }}"
       - name: TWO
-        run: echo ${{ join(github.event.commits.*.message, ' ') }}
+        run: echo "${{ join(github.event.commits.*.message, ' ') }}"
       - name: THREE
-        run: echo ${{ github.event.commits.message }}
+        run: echo "${{ github.event.commits.message }}"
       - name: FOUR
-        run: echo ${{ github.event.commits[0].message }}
+        run: echo "${{ github.event.commits[0].message }}"
       - name: npm install
         run: npm install
       - name: lint
