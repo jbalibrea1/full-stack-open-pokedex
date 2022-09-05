@@ -22,6 +22,10 @@ jobs:
         env:
           ARRAY: ${{ join(github.event.commits.*.url, ' ') }}
         run: echo "$ARRAY"
+      - name: array
+        env:
+          ARRAY: ${{ join(github.event.commits.*.message, ' ') }}
+        run: echo "$ARRAY"
       - name: npm install
         run: npm install
       - name: lint
