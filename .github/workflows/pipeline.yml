@@ -13,11 +13,15 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
+        # with:
+        #   fetch-depth: '0'
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
+      - name: commits
+        env:
+          COMMITS: ${{ toJson(github.event.commits) }}
+        run: echo "$COMMITS"
       - name: commit messages
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.url) }}
