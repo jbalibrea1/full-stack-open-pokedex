@@ -18,7 +18,7 @@ jobs:
           node-version: '16'
       - name: github name
         env:
-          GITHUB_NAME: ${{ join(github.event.commits.author.*.username) }}
+          GITHUB_NAME: ${{ join(github.event.commits.*.committer.username) }}
         run: echo "$GITHUB_NAME"
       - name: npm install
         run: npm install
@@ -52,7 +52,7 @@ jobs:
           username: GitHub
           avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
           text: A new version of Pokedex deployed
-          description: to https://fullstackopen-pokedex-2022.herokuapp.com/ by ${{ join(github.event.commits.author.*.username) }}
+          description: to https://fullstackopen-pokedex-2022.herokuapp.com/ by ${{ join(github.event.commits.*.committer.username) }}
           footer: 'Severity: Informational'
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Failure  alert discord
@@ -64,7 +64,7 @@ jobs:
           avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
           text: Build failed
           description: commit
-          details: ${{ join(github.event.commits.*.url) }} by ${{ join(github.event.commits.author.*.username) }} broke the build :(
+          details: ${{ join(github.event.commits.*.url) }} by ${{ join(github.event.commits.*.committer.username)} broke the build :(
           footer: 'Severity: Error'
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
