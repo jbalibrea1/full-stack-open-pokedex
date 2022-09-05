@@ -24,8 +24,6 @@ jobs:
         run: echo ${{ join(github.event.commits.*.message, ' ') }}
       - name: THREE
         run: echo ${{ github.event.commits.message }}
-      - name: FOUR
-        run: echo ${{ github.event.commits[0]message }}
       - name: npm install
         run: npm install
       - name: lint
