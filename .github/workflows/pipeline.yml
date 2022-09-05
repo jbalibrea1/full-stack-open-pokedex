@@ -23,6 +23,10 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
+      - name: github event
+        env:
+          GITHUB_EVENT: ${{ toJson(github.event) }}
+        run: echo "$GITHUB_EVENT"
       - name: commits
         env:
           COMMITS: ${{ toJson(github.event.commits) }}
