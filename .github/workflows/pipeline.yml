@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
@@ -25,7 +23,7 @@ jobs:
       - name: ONE
         run: echo "${{ join(github.event.commits.*.url, ' ') }}"
       - name: TWO
-        run: echo "${{ join(github.event.commits.*.message, ' ') }}"
+        run: echo "${{  toJson(join(github.event.commits.*.message, ' ')) }}"
       - name: THREE
         run: echo "${{ github.event.commits.message }}"
       - name: FOUR
