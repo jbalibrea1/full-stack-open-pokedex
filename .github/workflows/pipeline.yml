@@ -16,6 +16,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
+      - name: github name
+        env:
+          GITHUB_NAME: ${{ join(github.event.commits.author.*.username)) }}
+        run: echo "$GITHUB_NAME"
       - name: npm install
         run: npm install
       - name: lint
@@ -38,8 +42,31 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: 'fullstackopen-pokedex-2022' #Must be unique in Heroku
           heroku_email: 'jorge.balibrea1@gmail.com'
-          healthcheck: 'https://fullstackopen-pokedex-2022.herokuapp.com/health'
+          healthcheck: 'https://fullstackopen-pokedex-2022.herokuapp.com/healthFAIL'
           rollbackonhealthcheckfailed: true
+      - name: Success alert discord
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ success() && github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')}}
+        with:
+          severity: info
+          username: GitHub
+          avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
+          text: A new version of Pokedex deployed
+          description: to https://fullstackopen-pokedex-2022.herokuapp.com/ by ${{ join(github.event.commits.author.*.username)) }}
+          footer: 'Severity: Informational'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Failure  alert discord
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() && github.event_name == 'push'}}
+        with:
+          severity: error
+          username: GitHub
+          avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
+          text: Build failed
+          description: commit
+          details: ${{ join(github.event.commits.*.url) }} by jbalibrea1 broke the build :(
+          footer: 'Severity: Error'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:
     needs: [simple_deployment_pipeline]
@@ -54,27 +81,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-      - name: Success alert discord
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ success() && github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')}}
-        with:
-          severity: info
-          username: GitHub
-          avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
-          text: A new version of Pokedex deployed
-          description: to https://fullstackopen-pokedex-2022.herokuapp.com/ by jbalibrea1
-          details: ''
-          footer: 'Severity: Informational'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      - name: Failure  alert discord
-        uses: rjstone/discord-webhook-notify@v1
-        if: failure()
-        with:
-          severity: error
-          username: GitHub
-          avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
-          text: Build failed
-          description: commit
-          details: ${{ join(github.event.commits.*.url) }} by jbalibrea1 broke the build :(
-          footer: 'Severity: Error'
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
