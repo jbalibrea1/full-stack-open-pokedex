@@ -18,14 +18,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: array0
-        env:
-          ARRAY0: ${{ (github.event.commits.*.url[0]) }}
-        run: echo "$ARRAY0"
       - name: array
         env:
-          text: ${{ (github.event.commits.*.url) }}
-        run: echo "$text"
+          ARRAY: ${{ (github.event.commits.*.url) }}
+        run: echo "$ARRAY"
       - name: npm install
         run: npm install
       - name: lint
