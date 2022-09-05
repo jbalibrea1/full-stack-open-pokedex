@@ -12,26 +12,14 @@ jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: github context
+      - name: github name
         env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: github event
-        env:
-          GITHUB_EVENT: ${{ toJson(github.event) }}
-        run: echo "$GITHUB_EVENT"
-      - name: commits
-        env:
-          COMMITS: ${{ toJson(github.event.commits) }}
-        run: echo "$COMMITS"
-      - name: commit messages
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES"
+          GITHUB_NAME: ${{ join(github.event.commits.*.committer.username) }}
+        run: echo "$GITHUB_NAME"
       - name: npm install
         run: npm install
       - name: lint
@@ -48,7 +36,7 @@ jobs:
           wait-on: http://localhost:5000
           wait-on-timeout: 120
       - name: deploy to heroku
-        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip')}}
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')}}
         uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -56,6 +44,29 @@ jobs:
           heroku_email: 'jorge.balibrea1@gmail.com'
           healthcheck: 'https://fullstackopen-pokedex-2022.herokuapp.com/health'
           rollbackonhealthcheckfailed: true
+      - name: Success alert discord
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ success() && github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')}}
+        with:
+          severity: info
+          username: GitHub
+          avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
+          text: A new version of Pokedex deployed
+          description: to https://fullstackopen-pokedex-2022.herokuapp.com/ by ${{ join(github.event.commits.*.committer.username) }}
+          footer: 'Severity: Informational'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Failure  alert discord
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() && github.event_name == 'push'}}
+        with:
+          severity: error
+          username: GitHub
+          avatarUrl: https://avatars.githubusercontent.com/u/100881203?v=4
+          text: Build failed
+          description: commit
+          details: ${{ join(github.event.commits.*.url) }} by ${{ join(github.event.commits.*.committer.username)}} broke the build :(
+          footer: 'Severity: Error'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:
     needs: [simple_deployment_pipeline]
@@ -65,11 +76,12 @@ jobs:
         with:
           fetch-depth: '0'
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip')}}
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')}}
         uses: anothrNick/github-tag-action@ce4b5ffa38e072fa7a901e417253c438fcc2ccce
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+<<<<<<< HEAD
       # - name: Success alert discord
       #   uses: rjstone/discord-webhook-notify@v1
       #   if: success()
@@ -94,3 +106,5 @@ jobs:
       #     details: ${{(github.event.commits.*.url)}} by jbalibrea1 broke the build
       #     footer: 'Severity: Informational'
       #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+=======
+>>>>>>> master
