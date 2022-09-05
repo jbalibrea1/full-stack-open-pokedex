@@ -18,18 +18,14 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: array
-        env:
-          ARRAY: ${{ join(github.event.commits.*.url, ' ') }}
-        run: echo "$ARRAY"
-      - name: array2
-        env:
-          ARRAY2: ${{ join(github.event.commits.*.message, ' ') }}
-        run: echo "$ARRAY2"
-      - name: array3
-        env:
-          ARRAY3: ${{ github.event.commits.message }}
-        run: echo "$ARRAY3"
+      - name: ONE
+        run: echo ${{ join(github.event.commits.*.url, ' ') }}
+      - name: TWO
+        run: echo ${{ join(github.event.commits.*.message, ' ') }}
+      - name: THREE
+        run: echo ${{ github.event.commits.message }}
+      - name: FOUR
+        run: echo ${{ github.event.commits[0]message }}
       - name: npm install
         run: npm install
       - name: lint
