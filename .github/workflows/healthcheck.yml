@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-  schedule:
-    - cron: '1 * * * *'
+  # schedule:
+  #   - cron: '0 12 * * *'
 
 jobs:
   healtcheck:
@@ -16,4 +16,4 @@ jobs:
         with:
           url: https://fullstackopen-pokedex-2022.herokuapp.com/health
           max-attempts: 3
-          retry-delay: 5s 
+          retry-delay: 5s
